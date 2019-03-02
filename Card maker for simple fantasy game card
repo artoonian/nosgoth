@@ -1,0 +1,127 @@
+import csv
+import random
+import time
+roman_set={'weapon':35,'armor':90}
+japanese_set={'weapon':60,'armor':55}
+norse_set={'weapon':40,'armor':60}
+class Card :
+    def __init__(self,name, attack, health):
+        self.name = name
+        self.attack = attack
+        self.health = health
+
+class Repository :
+    def save (value:Card):
+        with open(value.name+'.csv','w')as file:
+            file.write(str(value.name)+','+str(value.attack)+','+str(value.health))
+
+    def card_maker (card):
+        with open (str(card) + '.csv' , 'r') as file :
+            a = list (csv.reader (file))
+        attack =a[0][1]
+        name =a[0][0]
+        health=a[0][2]
+        print (18 * '_')
+        print ('||' + 14 * ' ' + '||')
+        print ('||' + '"NAME"'.center (14) + '||')
+        print ('||' + str(name).center (14) + '||')
+        print ('||' + 14 * ' ' + '||')
+        print ('||' + '"DEFEND"'.center (14) + '||')
+        print ('||' + str(health).center (14) + '||')
+        print ('||' + 14 * ' ' + '||')
+        print ('||' + '"ATTACK"'.center (14) + '||')
+        print ('||' + str(attack).center (14) + '||')
+        print ('||' + 14 * ' ' + '||')
+        print (18 * '‾')
+
+class Getter :
+    @staticmethod
+    def user_input ():
+        n= input ('card\'s name: ')
+        print('"Armor and Weapon"')
+        print('  1- Roman set')
+        print('  2- Japanese set')
+        print('  3- Norse set')
+        x=input('choose an arsenal: ')
+        if x is '1':
+            a=roman_set.get('weapon')
+            h=roman_set.get('armor')
+        elif x is '2' :
+            a = japanese_set.get ('weapon')
+            h = japanese_set.get ('armor')
+        elif x is '3' :
+            a = norse_set.get ('weapon')
+            h = norse_set.get ('armor')
+        a += 10
+        h += 50
+        c=Card(n,a,h)
+        Repository.save(c)
+        time.sleep(1)
+
+class Fight :
+    def fighting (x,y):
+        return y-x
+
+
+    def attacking_role (attack):
+        dice =random.randint(1,6)
+        return attack/6 *dice
+    def defending_role (defend):
+        dice =random.randint(1,6)
+        return defend/6*dice
+
+
+    @staticmethod
+    def fight ():
+        q:Card=input('choose a card to attack :')
+        w= input('choose a card to defend: ')
+        with open (q + '.csv' , 'r') as file :
+            a = list (csv.reader (file))
+            attack = a[0][1]
+        with open (w + '.csv' , 'r') as file :
+            b = list (csv.reader (file))
+            health = b[0][2]
+            attacking_force = Fight.attacking_role(int(attack))
+            defending_power= Fight.defending_role(int(health))
+            full_defend = defending_power + int(health)
+        # print (attacking_force)
+        # print (defending_power)
+        # print (full_defend)
+
+        result=Fight.fighting(int(attacking_force),int(full_defend))
+        result -= defending_power
+        deflect =int(attacking_force)/int(defending_power)*100
+        print (q,'attacked with',int(attacking_force),'attacking force !!!')
+        print(w,'has succeeded to deflect the',int(deflect),'% of',q,'\'s attack')
+
+        if result < 0 : result =0
+        if result is 0 :
+            print(w,'couldnt defend the attack and he\'s dead')
+        else :
+            print(w,'has survived the attack with remaining health of',int(result),'!')
+        print ('phase ended'.center(40,'*'))
+
+class Panel :
+
+    @staticmethod
+    def card_reader ():
+        Repository.card_maker(input('enter card\'s name :'))
+
+
+    @staticmethod
+    def menu ():
+        print ('1- create a card')
+        print ('2- show the card')
+        print ('3- fight with cards')
+        x=input('choose an option :')
+        if x is '1':
+            Getter.user_input()
+        elif x is '2':
+            Panel.card_reader()
+        elif x is '3':
+            Fight.fight()
+        else :
+            print('wrong option / Try Again !')
+if __name__ == '__main__':
+    while True:
+        Panel.menu()
